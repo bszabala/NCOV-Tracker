@@ -22,8 +22,9 @@ export default {
     initMap() {
       MapboxGL.accessToken = this.accessToken
 
-      var covidSource = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations';
-      var features = __fetchSource(covidSource);
+      var covidSource =
+        'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
+      var features = __fetchSource(covidSource)
 
       var map = new MapboxGL.Map({
         container: 'worldMap',
@@ -98,23 +99,7 @@ export default {
           type: 'geojson',
           data: {
             type: 'FeatureCollection',
-            // 'features': [
-            //   {
-            //     'type': 'Feature',
-            //     'geometry': {
-            //       'type': 'Point',
-            //       'coordinates': [0, 0]
-            //     }
-            //   },
-            //   {
-            //     'type': 'Feature',
-            //     'geometry': {
-            //       'type': 'Point',
-            //       'coordinates': [12.8797207, 121.7740173]
-            //     }
-            //   },
-            // ]
-            'features': features
+            features: features
           }
         })
 
@@ -126,30 +111,72 @@ export default {
             'icon-image': 'pulsing-dot'
           }
         })
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', 'points', function(e) {
+          var coordinates = e.features[0].geometry.coordinates.slice()
+          var description = e.features[0].properties.description
+
+          // Ensure that if the map is zoomed out such that multiple
+          // copies of the feature are visible, the popup appears
+          // over the copy being pointed to.
+          // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          //   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+          // }
+
+          new MapboxGL.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map)
+        })
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'points', function() {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'points', function() {
+          map.getCanvas().style.cursor = ''
+        })
       })
 
       function __fetchSource(source) {
-        let data = [];
+        let data = []
 
-        axios.get(source)
-          .then(function (response) {
-            response.data.locations.forEach(function (location) {
+        axios
+          .get(source)
+          .then(function(response) {
+            response.data.locations.forEach(function(location) {
               data.push({
                 type: 'Feature',
+                properties: {
+                  id: location.id,
+                  description: `
+                    <div>
+                      <small>${location.province ? location.province+', ' : ''}${location.country}</small><br/>
+                      <small>Cases:</small> <strong>${location.latest.confirmed}</strong><br/>
+                      <small>Deaths:</small> <strong>${location.latest.deaths}</strong><br/>
+                      <small>Recovered:</small> <strong>${location.latest.recovered}</strong>
+                    </div>
+                  `
+                },
                 geometry: {
                   type: 'Point',
-                  coordinates: [location.coordinates.longitude, location.coordinates.latitude]
+                  coordinates: [
+                    location.coordinates.longitude,
+                    location.coordinates.latitude
+                  ]
                 }
               })
             })
           })
-          .catch(function (error) {
+          .catch(function(error) {
             console.log(error)
-          });
+          })
 
-        console.log(data)
-
-        return data;
+        return data
       }
     }
   }
@@ -162,5 +189,21 @@ export default {
   top: 0;
   bottom: 0;
   width: 100%;
+}
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
+  border-bottom-color: #fff !important;
+}
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
+  border-top-color: #fff !important;
+}
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: #fff !important;
+}
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: #fff !important;
 }
 </style>
