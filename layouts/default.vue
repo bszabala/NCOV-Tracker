@@ -8,38 +8,6 @@
       app
     >
       <v-list>
-        <v-list-group
-          v-for="item in items"
-          :key="item.title"
-          :to="item.to"
-          v-model="item.active"
-          :prepend-icon="item.icon"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            v-for="subItem in item.items"
-            :key="subItem.title"
-            :to="subItem.to"
-            @click=""
-          >
-
-            <v-list-item-action>
-            <!-- <v-icon>{{ subItem.icon }}</v-icon> -->
-          </v-list-item-action>
-
-            <v-list-item-content>
-              <v-list-item-title v-text="subItem.title"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
-
-      <!-- <v-list>
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -54,7 +22,8 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
-      </v-list> -->
+      </v-list>
+
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
@@ -104,86 +73,16 @@ export default {
       drawer: true,
       fixed: false,
       items: [
-      // {
-      //       title: 'Attractions',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Dining',
-      //       active: true,
-      //       items: [
-      //         { title: 'Breakfast & brunch' },
-      //         { title: 'New American' },
-      //         { title: 'Sushi' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Education',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Family',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Health',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Office',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Promotions',
-      //       items: [
-      //         { title: 'List Item' },
-      //       ],
-      //     },
         {
           icon: 'mdi-earth',
           title: 'World',
-          items: [
-            {
-              icon: 'mdi-arrow-right',
-              title: 'Confirmed Cases',
-              to: '/'
-            }
-          ]
+          to: '/'
         },
         {
           icon: 'mdi-map-marker-radius-outline',
           title: 'Philippines',
-          items: [
-            {
-              icon: 'mdi-arrow-right',
-              title: 'Confirmed Cases',
-              to: '/ph-confirmed'
-            },
-            {
-              icon: 'mdi-arrow-right',
-              title: 'Suspected Cases'
-            },
-            {
-              icon: 'mdi-arrow-right',
-              title: 'PUIs'
-            },
-            {
-              icon: 'mdi-arrow-right',
-              title: 'Checkpoints',
-              to: '/ph-checkpoints'
-            },
-          ]
-        }
+          to: '/philippines'
+        },
       ],
       miniVariant: false,
       right: true,
