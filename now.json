@@ -1,7 +1,12 @@
 {
   "build": {
     "env": {
-      "MAPBOX_ACCESS_TOKEN": "@mapbox-access-token"
+      "MAPBOX_ACCESS_TOKEN": "@mapbox-access-token",
+      "API_COVID_WORLD_CASES": "@api-covid-world-cases",
+      "API_COVID_PH_CONFIRMED_CASES": "@api-covid-ph-confirmed-cases",
+      "API_COVID_PH_SUSPECTED_CASES": "@api-covid-ph-suspected-cases",
+      "API_COVID_PH_PUI": "@api-covid-ph-pui",
+      "API_COVID_PH_CHECKPOINTS": "@api-covid-ph-checkpoints",
     }
   }
 }
