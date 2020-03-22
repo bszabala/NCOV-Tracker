@@ -22,11 +22,13 @@ module.exports = {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#FF6464' },
   /*
    ** Global CSS
    */
-  css: [],
+  css: [
+    '~/assets/main.css',
+  ],
   /*
    ** Plugins to load before mounting the App
    */
@@ -74,8 +76,8 @@ module.exports = {
   env: {
     baseUrl: process.env.BASE_URL || 'http://localhost:3000',
     MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
-    API_COVID_PH_CASES: process.env.API_COVID_PH_CASES,
-    API_COVID_OUTSIDE_PH_CASES: process.env.API_COVID_OUTSIDE_PH_CASES,
+    API_COVID_WORLD_CASES: process.env.API_COVID_WORLD_CASES,
+    API_COVID_PH_CONFIRMED_CASES: process.env.API_COVID_PH_CONFIRMED_CASES,
     API_COVID_PH_SUSPECTED_CASES: process.env.API_COVID_PH_SUSPECTED_CASES,
     API_COVID_PH_PUI: process.env.API_COVID_PH_PUI,
     API_COVID_PH_CHECKPOINTS: process.env.API_COVID_PH_CHECKPOINTS

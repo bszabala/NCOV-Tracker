@@ -11,20 +11,64 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      accessToken: process.env.MAPBOX_ACCESS_TOKEN
-      // map: {}
+      loading: false,
+      accessToken: process.env.MAPBOX_ACCESS_TOKEN,
+      sources: {
+        world: { 
+          api: process.env.API_COVID_WORLD_CASES,
+          data: []
+        }
+      }
     }
   },
-  mounted() {
+  asyncData () {
+    return new Promise((resolve) => {
+      setTimeout(function () {
+        resolve({})
+      }, 1000)
+    })
+  },
+  mounted () {
     this.initMap()
+  },
+  fetch() {
+    let data = [];
+    axios.get(this.sources.world.api)
+      .then(function(response) {
+        response.data.locations.forEach(function(location) {
+          data.push({
+            type: 'Feature',
+            properties: {
+              id: location.id,
+              description: `
+                <div>
+                  <small>${location.province ? location.province+', ' : ''}${location.country}</small><br/>
+                  <small>Cases:</small> <strong>${location.latest.confirmed}</strong><br/>
+                  <small>Deaths:</small> <strong>${location.latest.deaths}</strong><br/>
+                  <small>Recovered:</small> <strong>${location.latest.recovered}</strong>
+                </div>
+              `
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                location.coordinates.longitude,
+                location.coordinates.latitude
+              ]
+            }
+          })
+        })
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
+
+    return this.sources.world.data = data;
   },
   methods: {
     initMap() {
+      console.info(this.sources.world.data)
       MapboxGL.accessToken = this.accessToken
-
-      var covidSource =
-        'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
-      var features = __fetchSource(covidSource)
 
       var map = new MapboxGL.Map({
         container: 'worldMap',
@@ -75,8 +119,8 @@ export default {
           // draw inner circle
           context.beginPath()
           context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2)
-          context.fillStyle = 'rgba(255, 100, 100, 1)'
-          context.strokeStyle = 'white'
+          context.fillStyle = 'rgba(220, 20, 60, 1)'
+          context.strokeStyle = '#FFC0CB'
           context.lineWidth = 2 + 4 * (1 - t)
           context.fill()
           context.stroke()
@@ -92,14 +136,14 @@ export default {
         }
       }
 
-      map.on('load', function() {
+      map.on('load', () => {
         map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 })
 
         map.addSource('points', {
           type: 'geojson',
           data: {
             type: 'FeatureCollection',
-            features: features
+            features: this.sources.world.data
           }
         })
 
@@ -142,42 +186,6 @@ export default {
         })
       })
 
-      function __fetchSource(source) {
-        let data = []
-
-        axios
-          .get(source)
-          .then(function(response) {
-            response.data.locations.forEach(function(location) {
-              data.push({
-                type: 'Feature',
-                properties: {
-                  id: location.id,
-                  description: `
-                    <div>
-                      <small>${location.province ? location.province+', ' : ''}${location.country}</small><br/>
-                      <small>Cases:</small> <strong>${location.latest.confirmed}</strong><br/>
-                      <small>Deaths:</small> <strong>${location.latest.deaths}</strong><br/>
-                      <small>Recovered:</small> <strong>${location.latest.recovered}</strong>
-                    </div>
-                  `
-                },
-                geometry: {
-                  type: 'Point',
-                  coordinates: [
-                    location.coordinates.longitude,
-                    location.coordinates.latitude
-                  ]
-                }
-              })
-            })
-          })
-          .catch(function(error) {
-            console.log(error)
-          })
-
-        return data
-      }
     }
   }
 };
@@ -185,25 +193,9 @@ export default {
 
 <style scoped>
 #worldMap {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  height: calc(100vh - 64px);
+  height: -moz-calc(100vh - 64px);
+  height: -webkit-calc(100vh - 64px);
   width: 100%;
-}
-.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
-.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
-.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
-  border-bottom-color: #fff !important;
-}
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
-.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
-.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
-  border-top-color: #fff !important;
-}
-.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
-  border-right-color: #fff !important;
-}
-.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
-  border-left-color: #fff !important;
 }
 </style>
