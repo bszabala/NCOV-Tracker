@@ -14,7 +14,7 @@
   "dependencies": {
     "@now/node": "^1.4.1",
     "@nuxtjs/now-builder": "^0.17.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cross-env": "^5.2.0",
     "es6-promise": "^4.2.8",
     "eslint-loader": "^3.0.3",
